@@ -156,38 +156,38 @@ ul {
   width: 100%;
 }
 
+.adminArea {
+  bottom: 0px;
+  height: 120px;
+  position: absolute;
+  width: 100%;
+}
+
+.box {
+  display: inline-block;
+  width: 100%;
+}
+
 .inputQuestion {
   border: 10px solid #000;
-  bottom: 120px;
   height: 60px;
-  left: 0;
   outline: none;
   padding-left: 10px;
-  position: absolute;
-  right: 0;
-  width: 100%;
+  width: 45%;
 }
 
 .inputAnswer {
   border: 10px solid #000;
-  bottom: 60px;
   height: 60px;
-  left: 0;
   outline: none;
   padding-left: 10px;
-  position: absolute;
-  right: 0;
-  width: 100%;
+  width: 45%;
 }
 
 .pushQuestion{
   border: 10px solid #000;
-  bottom: 0;
   height: 60px;
-  left: 0;
   outline: none;
   padding-left: 10px;
-  position: absolute;
-  right: 0;
-  width: 100%;
+  width: 30%;
 }
