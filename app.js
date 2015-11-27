@@ -22,18 +22,17 @@ var question = "";
 io.on('connection', function (socket) {
   var addedUser = false;
 
-  function initQuestionAndAnsers() {
+  function initQuestion() {
     question = "";
-    answers = {};
   }
 
   socket.on('new question', function (data) {
-    initQuestionAndAnsers();
+    initQuestion();
 
     // we tell the client to execute 'new question'
     question = data;
     io.sockets.emit('new question', {
-      question: data
+      question: data.question
     });
   });
 

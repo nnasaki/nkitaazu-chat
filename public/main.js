@@ -234,7 +234,17 @@ $(function() {
 
   $pushQuestion.click(function () {
     console.log("pushQuestion");
-    var message = "質問だよー";
+    var questionText = $('.inputQuestion').val();
+    var answerText = $('.inputAnswer').val();
+    
+    if (questionText === "" || answerText === "") {
+      console.warn("not set question or answer");
+    }
+    
+    var message = {
+      question:questionText,
+      answer:answerText
+    };
     socket.emit('new question', message);
   })
 

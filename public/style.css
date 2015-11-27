@@ -156,6 +156,30 @@ ul {
   width: 100%;
 }
 
+.inputQuestion {
+  border: 10px solid #000;
+  bottom: 120px;
+  height: 60px;
+  left: 0;
+  outline: none;
+  padding-left: 10px;
+  position: absolute;
+  right: 0;
+  width: 100%;
+}
+
+.inputAnswer {
+  border: 10px solid #000;
+  bottom: 60px;
+  height: 60px;
+  left: 0;
+  outline: none;
+  padding-left: 10px;
+  position: absolute;
+  right: 0;
+  width: 100%;
+}
+
 .pushQuestion{
   border: 10px solid #000;
   bottom: 0;
