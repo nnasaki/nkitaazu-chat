@@ -203,16 +203,16 @@ $(function() {
     }
     // When the client hits ENTER on their keyboard
     if (event.which === 13) {
-      if (username) {
-        if ($question.text() === "") {
-          return;
-        }
-        sendMessage();
-        socket.emit('stop typing');
-        typing = false;
-      } else {
+      if (!username) {
         setUsername();
       }
+      if ($question.text() === "") {
+        return;
+      }
+      
+      sendMessage();
+      socket.emit('stop typing');
+      typing = false;
     }
   });
 
