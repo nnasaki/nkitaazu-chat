@@ -10,6 +10,8 @@ $(function() {
   // Initialize variables
   var $window = $(window);
   var $usernameInput = $('.usernameInput'); // Input for username
+  var $question = $('.question-title'); // question area
+  var $pushQuestion = $('.pushQuestion'); 
   var $messages = $('.messages'); // Messages area
   var $inputMessage = $('.inputMessage'); // Input message input box
 
@@ -74,6 +76,10 @@ $(function() {
     addMessageElement($el, options);
   }
 
+  function question (data) {
+    $question.text(data.question);
+  }
+  
   // Adds the visual chat message to the message list
   function addChatMessage (data, options) {
     // Don't fade the message in if there is an 'X was typing'
@@ -223,6 +229,12 @@ $(function() {
     $inputMessage.focus();
   });
 
+  $pushQuestion.click(function () {
+    console.log("pushQuestion");
+    var message = "質問だよー";
+    socket.emit('new question', message);
+  })
+
   // Socket events
 
   // Whenever the server emits 'login', log the login message
@@ -234,6 +246,10 @@ $(function() {
       prepend: true
     });
     addParticipantsMessage(data);
+  });
+
+  socket.on('new question', function (data) {
+    question(data);
   });
 
   // Whenever the server emits 'new message', update the chat body

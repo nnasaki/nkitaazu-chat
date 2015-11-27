@@ -21,6 +21,13 @@ var numUsers = 0;
 io.on('connection', function (socket) {
   var addedUser = false;
 
+  socket.on('new question', function (data) {
+    // we tell the client to execute 'new question'
+    io.sockets.emit('new question', {
+      question: data
+    });
+  });
+
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function (data) {
     // we tell the client to execute 'new message'
