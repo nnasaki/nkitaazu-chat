@@ -22,7 +22,14 @@ var question = "";
 io.on('connection', function (socket) {
   var addedUser = false;
 
+  function initQuestionAndAnsers() {
+    question = "";
+    answers = {};
+  }
+
   socket.on('new question', function (data) {
+    initQuestionAndAnsers();
+
     // we tell the client to execute 'new question'
     question = data;
     io.sockets.emit('new question', {
@@ -32,6 +39,10 @@ io.on('connection', function (socket) {
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function (data) {
+    if (question === "") {
+      return;
+    }
+    
     // we tell the client to execute 'new message'
     socket.broadcast.emit('new message', {
       username: socket.username,
