@@ -24,6 +24,7 @@ $(function() {
   var typing = false;
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
+  var waitForAnswer = false;
 
   var socket = io();
 
@@ -61,12 +62,9 @@ $(function() {
     // if there is a non-empty message and a socket connection
     if (message && connected) {
       $inputMessage.val('');
-      addChatMessage({
-        username: username,
-        message: message
-      });
       // tell server to execute 'new message' and send along one parameter
       socket.emit('new message', message);
+      waitForAnswer = true;
     }
   }
 
@@ -77,6 +75,7 @@ $(function() {
   }
 
   function question (data) {
+    waitForAnswer = false;
     $question.text(data.question);
   }
   
@@ -94,7 +93,7 @@ $(function() {
       .text(data.username)
       .css('color', getUsernameColor(data.username));
     var $messageBodyDiv = $('<span class="messageBody">')
-      .text(data.message);
+      .text(data.sequence + " : " + data.message);
 
     var typingClass = data.typing ? 'typing' : '';
     var $messageDiv = $('<li class="message"/>')
@@ -207,6 +206,10 @@ $(function() {
         setUsername();
       }
       if ($question.text() === "") {
+        return;
+      }
+      // 回答待ちの場合送信しない。
+      if (waitForAnswer) {
         return;
       }
       
