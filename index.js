@@ -17,12 +17,14 @@ app.use(express.static(__dirname + '/public'));
 // usernames which are currently connected to the chat
 var usernames = {};
 var numUsers = 0;
+var question = "";
 
 io.on('connection', function (socket) {
   var addedUser = false;
 
   socket.on('new question', function (data) {
     // we tell the client to execute 'new question'
+    question = data;
     io.sockets.emit('new question', {
       question: data
     });
