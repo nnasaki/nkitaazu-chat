@@ -118,9 +118,14 @@ ul {
 
 .question-title{
   height: 20%;
-  margin: 0;
-  overflow-y: scroll;
-  padding: 10px 20px 10px 20px;  
+}
+
+h1 {
+	padding: .5em .75em;
+	background: -webkit-linear-gradient(top, #69b4e6 0%, #3498db 100%);
+	background: linear-gradient(to bottom, #69b4e6 0%, #3498db 100%);
+	color: #fff;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
 }
 
 .messages {
@@ -142,6 +147,20 @@ ul {
   text-align: right;
 }
 
+.correct {
+  font-weight: 700;
+  overflow: hidden;
+  padding-right: 15px;
+  color: blue;
+}
+
+.notCorrect {
+  font-weight: 700;
+  overflow: hidden;
+  padding-right: 15px;
+  color: red;
+}
+
 /* Input */
 
 .inputMessage {
@@ -156,14 +175,46 @@ ul {
   width: 100%;
 }
 
-.pushQuestion{
+.adminArea {
+  bottom: 0px;
+  height: 120px;
+  position: absolute;
+  width: 100%;
+}
+
+.box {
+  display: inline-block;
+  width: 100%;
+}
+
+.inputQuestion {
   border: 10px solid #000;
-  bottom: 0;
   height: 60px;
-  left: 0;
   outline: none;
   padding-left: 10px;
-  position: absolute;
-  right: 0;
-  width: 100%;
+  width: 45%;
+}
+
+.inputAnswer {
+  border: 10px solid #000;
+  height: 60px;
+  outline: none;
+  padding-left: 10px;
+  width: 45%;
+}
+
+.pushQuestion {
+  border: 10px solid #000;
+  height: 60px;
+  outline: none;
+  padding-left: 10px;
+  width: 30%;
+}
+
+.pushAnswer {
+  border: 10px solid #000;
+  height: 60px;
+  outline: none;
+  padding-left: 10px;
+  width: 30%;
 }

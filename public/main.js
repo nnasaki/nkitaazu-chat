@@ -12,6 +12,7 @@ $(function() {
   var $usernameInput = $('.usernameInput'); // Input for username
   var $question = $('.question-title'); // question area
   var $pushQuestion = $('.pushQuestion'); 
+  var $pushAnswer = $('.pushAnswer'); 
   var $messages = $('.messages'); // Messages area
   var $inputMessage = $('.inputMessage'); // Input message input box
 
@@ -24,6 +25,7 @@ $(function() {
   var typing = false;
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
+  var waitForAnswer = false;
 
   var socket = io();
 
@@ -61,12 +63,9 @@ $(function() {
     // if there is a non-empty message and a socket connection
     if (message && connected) {
       $inputMessage.val('');
-      addChatMessage({
-        username: username,
-        message: message
-      });
       // tell server to execute 'new message' and send along one parameter
       socket.emit('new message', message);
+      waitForAnswer = true;
     }
   }
 
@@ -77,6 +76,12 @@ $(function() {
   }
 
   function question (data) {
+    $(".messages").empty();
+    waitForAnswer = false;
+    $question.text("問題：" + data.question);
+  }
+
+  function answer (data) {
     $question.text(data.question);
   }
   
@@ -93,14 +98,26 @@ $(function() {
     var $usernameDiv = $('<span class="username"/>')
       .text(data.username)
       .css('color', getUsernameColor(data.username));
+    
+    var $answer = "";
+    if (data.correct != undefined) {
+      if (data.correct) {
+        $answer = $('<span class="correct">')
+          .append('○')
+      } else {
+        $answer = $('<span class="notCorrect">')
+          .append('×')        
+      }
+    }
+    
     var $messageBodyDiv = $('<span class="messageBody">')
-      .text(data.message);
+      .text(data.sequence + " : " + data.message);
 
     var typingClass = data.typing ? 'typing' : '';
     var $messageDiv = $('<li class="message"/>')
       .data('username', data.username)
       .addClass(typingClass)
-      .append($usernameDiv, $messageBodyDiv);
+      .append($answer, $usernameDiv, $messageBodyDiv);
 
     addMessageElement($messageDiv, options);
   }
@@ -203,13 +220,20 @@ $(function() {
     }
     // When the client hits ENTER on their keyboard
     if (event.which === 13) {
-      if (username) {
-        sendMessage();
-        socket.emit('stop typing');
-        typing = false;
-      } else {
+      if (!username) {
         setUsername();
       }
+      if ($question.text() === "") {
+        return;
+      }
+      // 回答待ちの場合送信しない。
+      if (waitForAnswer) {
+        return;
+      }
+      
+      sendMessage();
+      socket.emit('stop typing');
+      typing = false;
     }
   });
 
@@ -231,9 +255,24 @@ $(function() {
 
   $pushQuestion.click(function () {
     console.log("pushQuestion");
-    var message = "質問だよー";
+    var questionText = $('.inputQuestion').val();
+    var answerText = $('.inputAnswer').val();
+    
+    if (questionText === "" || answerText === "") {
+      console.warn("not set question or answer");
+    }
+    
+    var message = {
+      question:questionText,
+      answer:answerText
+    };
     socket.emit('new question', message);
-  })
+  });
+
+  $pushAnswer.click(function () {
+    console.log("pushAnswer");
+    socket.emit('answer question');
+  });
 
   // Socket events
 
@@ -246,6 +285,13 @@ $(function() {
       prepend: true
     });
     addParticipantsMessage(data);
+  });
+
+  socket.on('answer question', function (data) {
+    $(".messages").empty();
+    data.forEach(function(element) {
+      addChatMessage(element);      
+    }, this);
   });
 
   socket.on('new question', function (data) {
