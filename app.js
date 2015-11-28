@@ -20,6 +20,16 @@ var numUsers = 0;
 var question = "";
 var sequence = 0;
 
+var eventHubs = require('eventhubs-js');
+eventHubs.init({
+    hubNamespace: "nkitaazu-ns",
+    hubName: "nkitaazu",
+    keyName: "send",
+    key: "LaioFeOffMZontOG2VbgwmRbrbtZ4mxX6A2/eu980Ek="
+});
+
+var utf8 = require('utf8');
+
 io.on('connection', function (socket) {
   var addedUser = false;
 
@@ -27,6 +37,26 @@ io.on('connection', function (socket) {
     question = "";
   }
 
+  function sendEventHub(data) {
+    var jsonMessage = {
+      question: question.question,
+      answer: question.answer,
+      username: socket.username,
+      sequence: sequence,
+      message: data,
+      time: (new Date).toISOString()
+    }
+
+    eventHubs.sendMessage({
+      message: jsonMessage
+    }).catch(function(err) {
+      console.log(err);
+    }).then(function() {
+      console.log('Message Sent!');
+    });
+
+  }
+  
   socket.on('new question', function (data) {
     initQuestion();
 
@@ -49,6 +79,8 @@ io.on('connection', function (socket) {
       message: data,
       sequence: ++sequence
     });
+    
+    sendEventHub(data);
   });
 
   // when the client emits 'add user', this listens and executes
