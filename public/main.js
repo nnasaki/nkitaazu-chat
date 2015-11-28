@@ -76,6 +76,7 @@ $(function() {
   }
 
   function question (data) {
+    $(".messages").empty();
     waitForAnswer = false;
     $question.text("問題：" + data.question);
   }
