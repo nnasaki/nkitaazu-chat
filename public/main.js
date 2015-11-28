@@ -77,7 +77,7 @@ $(function() {
 
   function question (data) {
     waitForAnswer = false;
-    $question.text(data.question);
+    $question.text("問題：" + data.question);
   }
 
   function answer (data) {
@@ -100,7 +100,6 @@ $(function() {
     
     var $answer = "";
     if (data.correct != undefined) {
-      console.log("not undef");
       if (data.correct) {
         $answer = $('<span class="correct">')
           .append('○')
