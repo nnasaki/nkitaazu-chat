@@ -142,6 +142,20 @@ ul {
   text-align: right;
 }
 
+.correct {
+  font-weight: 700;
+  overflow: hidden;
+  padding-right: 15px;
+  color: blue;
+}
+
+.notCorrect {
+  font-weight: 700;
+  overflow: hidden;
+  padding-right: 15px;
+  color: red;
+}
+
 /* Input */
 
 .inputMessage {
@@ -184,7 +198,15 @@ ul {
   width: 45%;
 }
 
-.pushQuestion{
+.pushQuestion {
+  border: 10px solid #000;
+  height: 60px;
+  outline: none;
+  padding-left: 10px;
+  width: 30%;
+}
+
+.pushAnswer {
   border: 10px solid #000;
   height: 60px;
   outline: none;

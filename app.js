@@ -20,6 +20,7 @@ var numUsers = 0;
 var question = "";
 var sequence = 0;
 
+// EventHubs init
 var eventHubs = require('eventhubs-js');
 eventHubs.init({
     hubNamespace: "nkitaazu-ns",
@@ -28,13 +29,41 @@ eventHubs.init({
     key: "LaioFeOffMZontOG2VbgwmRbrbtZ4mxX6A2/eu980Ek="
 });
 
-var utf8 = require('utf8');
+// DocumentDB init
+var config = {}
+
+config.endpoint = "https://nkitaazu.documents.azure.com:443/";
+config.authKey = "9DAJyqJikqhox+q+uqn1grOJ0k43YSj+zS8y3bdFJIK4NOFzRIsQXkZpP1AFBMD3C7JweAKVwQ8gGUjCLfHDNQ==";
+config.dbDefinition = {"id": "question"};
+config.collDefinition = {"id": "default"};
+
+var documentClient = require("documentdb").DocumentClient;
+var client = new documentClient(config.endpoint, {"masterKey": config.authKey});
+
+var queryCollection = function(question, callback) {
+  var querySpec = {
+      query: 'SELECT * FROM root r WHERE r.question=@question',
+      parameters: [{
+          name: '@question',
+          value: question
+      }]
+  };
+
+  var collectionUri = "dbs/" + config.dbDefinition.id + "/colls/" + config.collDefinition.id;
+
+  client.queryDocuments(collectionUri, querySpec).toArray(function(err, results) {
+      if(err) return callback(err);
+
+      callback(null, results);
+  });
+};
 
 io.on('connection', function (socket) {
   var addedUser = false;
 
   function initQuestion() {
     question = "";
+    sequence = 0;
   }
 
   function sendEventHub(data) {
@@ -56,6 +85,27 @@ io.on('connection', function (socket) {
     });
 
   }
+
+  socket.on('answer question', function() {
+    queryCollection(question.question, function(err, results) {
+      if(err) return console.log(err);
+      
+      console.log('Query results:\n' + JSON.stringify(results, null, '\t') + '\n');
+      
+      var answers = [];
+      results.forEach(function(result) {
+        answers.push({
+          correct: (result.answer === result.message) ? true : false,
+          sequence: result.sequence,
+          username: result.username,
+          message: result.message
+        });
+      }, this);
+      
+      io.sockets.emit('answer question', answers)
+    });
+
+  })
   
   socket.on('new question', function (data) {
     initQuestion();

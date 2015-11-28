@@ -12,6 +12,7 @@ $(function() {
   var $usernameInput = $('.usernameInput'); // Input for username
   var $question = $('.question-title'); // question area
   var $pushQuestion = $('.pushQuestion'); 
+  var $pushAnswer = $('.pushAnswer'); 
   var $messages = $('.messages'); // Messages area
   var $inputMessage = $('.inputMessage'); // Input message input box
 
@@ -78,6 +79,10 @@ $(function() {
     waitForAnswer = false;
     $question.text(data.question);
   }
+
+  function answer (data) {
+    $question.text(data.question);
+  }
   
   // Adds the visual chat message to the message list
   function addChatMessage (data, options) {
@@ -92,6 +97,19 @@ $(function() {
     var $usernameDiv = $('<span class="username"/>')
       .text(data.username)
       .css('color', getUsernameColor(data.username));
+    
+    var $answer = "";
+    if (data.correct != undefined) {
+      console.log("not undef");
+      if (data.correct) {
+        $answer = $('<span class="correct">')
+          .append('○')
+      } else {
+        $answer = $('<span class="notCorrect">')
+          .append('×')        
+      }
+    }
+    
     var $messageBodyDiv = $('<span class="messageBody">')
       .text(data.sequence + " : " + data.message);
 
@@ -99,7 +117,7 @@ $(function() {
     var $messageDiv = $('<li class="message"/>')
       .data('username', data.username)
       .addClass(typingClass)
-      .append($usernameDiv, $messageBodyDiv);
+      .append($answer, $usernameDiv, $messageBodyDiv);
 
     addMessageElement($messageDiv, options);
   }
@@ -249,7 +267,12 @@ $(function() {
       answer:answerText
     };
     socket.emit('new question', message);
-  })
+  });
+
+  $pushAnswer.click(function () {
+    console.log("pushAnswer");
+    socket.emit('answer question');
+  });
 
   // Socket events
 
@@ -262,6 +285,13 @@ $(function() {
       prepend: true
     });
     addParticipantsMessage(data);
+  });
+
+  socket.on('answer question', function (data) {
+    $(".messages").empty();
+    data.forEach(function(element) {
+      addChatMessage(element);      
+    }, this);
   });
 
   socket.on('new question', function (data) {
